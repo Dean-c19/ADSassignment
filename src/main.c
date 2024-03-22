@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+
 //preprocessor Variable
 #define MAX_CARS 5
 
@@ -33,13 +34,19 @@ void myTask(struct Car** front);
 void ExitTheSystem(struct Car** front);
 int carCounter(struct Car* front);
 bool isUniqueRegistration(struct Car* front, const char* registration);
+void saveToFile(struct Car* front);
+void loadFromFile(struct Car** front);
+
 
 
 
 int main()
 {
     struct Car* front = NULL;
-     menu(&front);
+    loadFromFile(&front);
+    
+  
+    menu(&front);
     
     return 0;
     }
@@ -149,6 +156,8 @@ void AddACar(struct Car** front)
 
     newCar->next = *front;
     *front = newCar;
+
+   
     
 
    
@@ -357,6 +366,8 @@ void myTask(struct Car** front)
 void ExitTheSystem(struct Car** front)
 {
     // Code for exiting the system
+  
+    saveToFile(*front);
     printf("Bye!!\n");
     exit(0);
 }
@@ -385,3 +396,46 @@ bool isUniqueRegistration(struct Car* front, const char* registration) {
     }
     return true; // returns true if registration is unique
 }
+
+
+ // code to save to file car.dat 
+
+void saveToFile(struct Car* front) {
+    FILE* file = fopen("car.dat", "w");// opens the file in write mode
+
+    
+    if (file == NULL) {
+        printf("Error, could not open file\n");
+        return;
+    }
+
+    struct Car* current = front;
+    while (current != NULL) {// while loop to write the details of the cars to the file
+        fprintf(file, "%s %s %s %d %d %.2f\n", current->registration, current->makeAndModel, current->colour, current->previousOwners, current->reserved, current->reservedAmount);// writes the details of the cars to the file
+        current = current->next;
+    }
+
+    fclose(file);
+
+}
+
+// code to load from file car.dat
+
+void loadFromFile(struct Car** front) {
+    FILE* file = fopen("car.dat", "r");// opens the file in read mode
+    if (file == NULL) {
+        printf("Error, could not open file\n");
+        return;
+    }
+
+    while (!feof(file)) {// while loop to read the details of the cars from the file feof is used to check if the end of the file has been reached
+        struct Car* newCar = (struct Car*)malloc(sizeof(struct Car)); // create space for a new car
+        fscanf(file, "%s %s %s %d %d %f\n", newCar->registration, newCar->makeAndModel, newCar->colour, &newCar->previousOwners, &newCar->reserved, &newCar->reservedAmount);// reads the details of the cars from the file
+        newCar->next = *front;
+        *front = newCar;
+    }
+
+    fclose(file);
+}
+
+
