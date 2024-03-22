@@ -54,7 +54,7 @@ void menu(struct Car** front){
     printf("3. Reserve/Unreserve a car in the showroom\n");
     printf("4. View all cars in the showroom\n");
     printf("5. View a specific car in the showroom\n");
-    printf("6. This should be an appropriate option that you provide\n");
+    printf("6. Respray a car\n");
     printf("7. Exit the system\n");
     scanf("%d", &ans);
     
@@ -288,12 +288,70 @@ void ViewAllCars(struct Car** front)
 
 void ViewSpecificCar(struct Car** front)
 {
-    // Code for viewing a specific car in the showroom
+    // Check if the showroom is empty
+    if (*front == NULL) {
+        printf("Error, Showroom is empty.\n");
+        return;
+    }
+
+    struct Car** current = front;
+    char registration[9]; // this stores the registration of the specific car that the user wants to view
+    printf("Input the registration of the specific car you want to view: \n");
+    scanf("%s", registration); 
+
+    while (*current != NULL) { // use string compare to check if the registration inputted is the same as one in the list
+        if (strcmp((*current)->registration, registration) == 0) { // if the registration is the same as the one in the list then print the details of that car
+            
+        
+        printf("Registration: %s\n", (*current)->registration);
+        printf("Make and Model: %s\n", (*current)->makeAndModel);
+        printf("Colour: %s\n", (*current)->colour);
+        printf("Previous Owners: %d\n", (*current)->previousOwners);
+        printf("Reserved: %s\n", (*current)->reserved ? "Yes" : "No");
+        if ((*current)->reserved) {
+            printf("Reserve Amount: %.2f\n", (*current)->reservedAmount);
+
+        
+        }
+        printf("\n");
+         return;
+    }
+        *current = (*current)->next; 
+    
+}
+  printf("Error, Specific car with registration %s not found in the showroom\n", registration);
+    
 }
 
 void myTask(struct Car** front)
 {
     // Code for my task 
+    // Check if the showroom is empty
+    if (front == NULL || *front == NULL) {
+        printf("Error, Showroom is empty.\n");
+        return;
+    }
+
+    // code to respray a car 
+    struct Car* current = *front;
+    char registration[9]; // this stores the registration of the car that the user wants to respray
+    printf("Input the registration of the car you want to respray: \n");
+    scanf("%s", registration);
+
+    while (current != NULL) 
+    {
+        if (strcmp(current->registration, registration) == 0) { // use string compare to check if the registration inputted is the same as one in the list
+            printf("Input the new colour you wish to respray the car: \n");
+            scanf("%s", current->colour); 
+            printf("Car with registration %s has been resprayed to %s\n", registration, current->colour); //changes the colour of the car and prints the new colour
+            return;
+        }
+        current = current->next;
+    }
+    
+    printf("Error, Car with registration %s not found in the showroom\n", registration);
+
+    
 }
 
 void ExitTheSystem(struct Car** front)
